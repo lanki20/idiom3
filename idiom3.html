@@ -1,0 +1,443 @@
+import React, { useState, useEffect } from 'react';
+import { CheckCircle, XCircle, RefreshCw, MousePointerClick, ArrowRight, Clock, AlertCircle, Info, Trophy } from 'lucide-react';
+
+// === 題庫設定 (三套全新題幹，隨機輪替) ===
+const questionSets = [
+  // 第一套
+  [
+    { id: 1, text: "身為主管，分配獎金時一定要公平公正，絕不能", blank: "厚此薄彼", after: "，否則會引起員工強烈不滿。" },
+    { id: 2, text: "這家老字號糕餅店每逢中秋節總是", blank: "戶限為穿", after: "，排隊購買的顧客絡繹不絕，連門檻都快被踩破了。" },
+    { id: 3, text: "他一生行事光明磊落，自認對得起天地良心，絕對", blank: "俯仰無愧", after: "。" },
+    { id: 4, text: "這座小島擁有", blank: "得天獨厚", after: "的地理位置與氣候，四季如春，是著名的度假勝地。" },
+    { id: 5, text: "遇到辦公室裡的人事鬥爭，他總是選擇", blank: "明哲保身", after: "，保持中立，不願捲入是非之中。" },
+    { id: 6, text: "經理對於這個創新提案", blank: "不置可否", after: "，既沒有點頭答應，也沒有直接拒絕，讓人摸不透他的真實想法。" },
+    { id: 7, text: "那位年輕藝術家雖然才華洋溢，卻因為", blank: "恃才傲物", after: "、目中無人，得罪了不少業界的前輩。" },
+    { id: 8, text: "他表面上對長官的指示連聲稱是，私底下卻", blank: "陽奉陰違", after: "，完全照自己的意思去做。" },
+    { id: 9, text: "退休後，他搬回鄉下種菜養雞，遠離都市喧囂，過著", blank: "返璞歸真", after: "的恬淡生活。" },
+    { id: 10, text: "隔壁搬來一位", blank: "慈眉善目", after: "的老奶奶，經常烤餅乾分給社區的小朋友吃。" },
+    { id: 11, text: "孩子們在廣闊的草原上", blank: "無拘無束", after: "地奔跑放風箏，玩得不亦樂乎。" },
+    { id: 12, text: "參加婚禮時穿著打扮要得體，千萬別穿著浮誇的白紗", blank: "喧賓奪主", after: "，搶了新娘的風采。" },
+  ],
+  // 第二套
+  [
+    { id: 1, text: "父母對待孩子應該一視同仁，切忌", blank: "厚此薄彼", after: "，以免造成手足間的嫌隙與不平。" },
+    { id: 2, text: "這家知名網美餐廳剛開幕，每天來打卡的民眾", blank: "戶限為穿", after: "，熱鬧非凡。" },
+    { id: 3, text: "只要我做事本著良心，沒有做對不起別人的事，自然能", blank: "俯仰無愧", after: "，半夜不怕鬼敲門。" },
+    { id: 4, text: "臺灣擁有", blank: "得天獨厚", after: "的自然景觀資源，高山與海洋兼具，吸引許多觀光客探訪。" },
+    { id: 5, text: "在這個充滿勾心鬥角的部門裡，他學會了", blank: "明哲保身", after: "，不輕易表露自己的真實想法。" },
+    { id: 6, text: "對於是否要改變現有制度，董事長始終", blank: "不置可否", after: "，讓底下的主管們無所適從。" },
+    { id: 7, text: "他雖然聰明絕頂，卻總是", blank: "恃才傲物", after: "，不願與人合作，因此在團隊中人緣並不好。" },
+    { id: 8, text: "這些不肖業者對政府的環保法規", blank: "陽奉陰違", after: "，私下依然偷偷排放有毒廢水。" },
+    { id: 9, text: "厭倦了都市的快節奏與繁華，他決定搬到東部過著", blank: "返璞歸真", after: "的純樸農夫生活。" },
+    { id: 10, text: "廟裡供奉的菩薩神像", blank: "慈眉善目", after: "，讓人看了內心感到十分平靜與安定。" },
+    { id: 11, text: "脫離了繁重的課業壓力，畢業生們終於可以", blank: "無拘無束", after: "地享受漫長的暑假時光。" },
+    { id: 12, text: "這道料理的特製沾醬味道太過濃烈，反而", blank: "喧賓奪主", after: "，掩蓋了頂級海鮮原本的鮮甜。" },
+  ],
+  // 第三套
+  [
+    { id: 1, text: "老師在評分時必須客觀公正，不能因為學生的家世背景而", blank: "厚此薄彼", after: "。" },
+    { id: 2, text: "每到百貨公司的週年慶，一樓的化妝品專櫃總是", blank: "戶限為穿", after: "，大家都想搶到最優惠的商品。" },
+    { id: 3, text: "他一生清廉奉公，退休時可以大聲說自己對國家社會", blank: "俯仰無愧", after: "。" },
+    { id: 4, text: "這片土地擁有", blank: "得天獨厚", after: "的肥沃土壤，種出來的水果特別香甜多汁。" },
+    { id: 5, text: "為了避免捲入這場政治風暴，許多官員選擇", blank: "明哲保身", after: "，對爭議事件保持沈默。" },
+    { id: 6, text: "面對記者的尖銳提問，發言人", blank: "不置可否", after: "，用高超的場面話巧妙地迴避了過去。" },
+    { id: 7, text: "即使工作能力再強，若是", blank: "恃才傲物", after: "、不懂得謙虛，也很難獲得他人的真心尊重。" },
+    { id: 8, text: "這種", blank: "陽奉陰違", after: "的行為最要不得，當面說會改進，背後卻又繼續搞小動作。" },
+    { id: 9, text: "經過多年的商場打拚，他現在更嚮往", blank: "返璞歸真", after: "、簡單沒有負擔的日子。" },
+    { id: 10, text: "院長爺爺平時總是", blank: "慈眉善目", after: "的，對待育幼院裡的孩子們就像自己的親孫子一樣。" },
+    { id: 11, text: "藝術家的創作應該要", blank: "無拘無束", after: "，不受傳統框架的限制，才能激發出獨一無二的作品。" },
+    { id: 12, text: "配角在劇中的表現太過搶眼，反而", blank: "喧賓奪主", after: "，讓觀眾差點忽略了男女主角的存在。" },
+  ]
+];
+
+// 完整的成語庫
+const baseIdiomBank = [
+  "得天獨厚", "不置可否", "明哲保身", "俯仰無愧",
+  "慈眉善目", "恃才傲物", "陽奉陰違", "厚此薄彼",
+  "無拘無束", "返璞歸真", "戶限為穿", "喧賓奪主"
+];
+
+// 成語提示 (用於答錯時)
+const idiomHints = {
+  "厚此薄彼": "優待某一方，冷落另一方。形容對人不公平。",
+  "戶限為穿": "門檻都快被踩破了。形容進出的人很多，非常熱鬧。",
+  "俯仰無愧": "比喻沒有做虧心事，對得起天地良心。",
+  "得天獨厚": "獨具特殊的優越條件，也指所處的環境特別好。",
+  "明哲保身": "形容人能看清時勢，迴避禍患，保全自身。",
+  "不置可否": "不說可以，也不說不可以。形容不表示明確的意見。",
+  "恃才傲物": "依仗著自己的才能而驕傲自大，看不起別人。",
+  "陽奉陰違": "表面上裝著遵守奉行，暗地裡卻違背不照辦。",
+  "返璞歸真": "去除外在的裝飾，回復原來的自然狀態。",
+  "慈眉善目": "形容面容慈祥和善。",
+  "無拘無束": "自由自在，沒有任何拘束。",
+  "喧賓奪主": "比喻次要的人或事物占了主要者的位置。"
+};
+
+// 輔助函數：打亂陣列
+const shuffleArray = (array) => {
+  const newArr = [...array];
+  for (let i = newArr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+  }
+  return newArr;
+};
+
+// 格式化時間 (秒 -> mm:ss)
+const formatTime = (seconds) => {
+  const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+  const s = (seconds % 60).toString().padStart(2, '0');
+  return `${m}:${s}`;
+};
+
+export default function App() {
+  const [currentQuestions, setCurrentQuestions] = useState([]);
+  const [shuffledIdioms, setShuffledIdioms] = useState([]);
+  const [answers, setAnswers] = useState(Array(12).fill(null));
+  const [activeBlank, setActiveBlank] = useState(0);
+  
+  // 遊戲狀態：'playing' (遊玩中), 'checking' (檢查錯誤中/提示中), 'won' (過關)
+  const [gameState, setGameState] = useState('playing'); 
+  const [errorMsg, setErrorMsg] = useState('');
+  const [wrongIndices, setWrongIndices] = useState([]);
+  
+  // 計時器
+  const [timeElapsed, setTimeElapsed] = useState(0);
+  const [timerActive, setTimerActive] = useState(false);
+
+  // 初始化遊戲
+  const initGame = () => {
+    const randomSetIndex = Math.floor(Math.random() * questionSets.length);
+    setCurrentQuestions(questionSets[randomSetIndex]);
+    setShuffledIdioms(shuffleArray(baseIdiomBank));
+    setAnswers(Array(12).fill(null));
+    setActiveBlank(0);
+    setGameState('playing');
+    setErrorMsg('');
+    setWrongIndices([]);
+    setTimeElapsed(0);
+    setTimerActive(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // 初始載入
+  useEffect(() => {
+    initGame();
+  }, []);
+
+  // 計時器邏輯
+  useEffect(() => {
+    let interval;
+    if (timerActive) {
+      interval = setInterval(() => {
+        setTimeElapsed(prev => prev + 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [timerActive]);
+
+  // 處理點擊成語庫
+  const handleSelectIdiom = (idiom) => {
+    if (gameState !== 'playing' || activeBlank === null) return;
+    setErrorMsg(''); // 清除錯誤提示
+
+    const newAnswers = [...answers];
+    const existingIndex = newAnswers.indexOf(idiom);
+    
+    // 如果這個成語已經在其他格子被使用了，先把它從原本的格子拔出來（支援移動功能）
+    if (existingIndex !== -1) {
+      newAnswers[existingIndex] = null;
+    }
+    
+    // 填入目前選擇的空格
+    newAnswers[activeBlank] = idiom;
+    setAnswers(newAnswers);
+
+    // 自動跳到下一個還沒填寫的空格
+    const nextEmpty = newAnswers.findIndex((ans, idx) => ans === null && idx !== activeBlank);
+    setActiveBlank(nextEmpty !== -1 ? nextEmpty : null);
+  };
+
+  // 處理點擊空格
+  const handleSlotClick = (index) => {
+    if (gameState !== 'playing') return;
+    
+    // 【核心優化】如果點擊的是「已經填過」的格子，直接清空該格，讓成語退回字庫
+    if (answers[index] !== null) {
+      const newAnswers = [...answers];
+      newAnswers[index] = null;
+      setAnswers(newAnswers);
+    }
+    
+    setActiveBlank(index);
+    setErrorMsg('');
+  };
+
+  // 提交答案
+  const handleSubmit = () => {
+    if (answers.includes(null)) {
+      setErrorMsg("⚠️ 還有空格未填寫完畢喔！請全部填滿再交卷。");
+      return;
+    }
+    
+    let wIndices = [];
+    answers.forEach((ans, idx) => {
+      if (ans !== currentQuestions[idx].blank) wIndices.push(idx);
+    });
+
+    if (wIndices.length === 0) {
+      // 全對
+      setGameState('won');
+      setTimerActive(false);
+    } else {
+      // 有錯
+      setWrongIndices(wIndices);
+      setGameState('checking');
+    }
+  };
+
+  // 重新嘗試錯誤題目
+  const handleRetryErrors = () => {
+    const newAnswers = [...answers];
+    wrongIndices.forEach(idx => {
+      newAnswers[idx] = null; // 清空錯的答案
+    });
+    setAnswers(newAnswers);
+    setGameState('playing');
+    setWrongIndices([]);
+    setErrorMsg('');
+    
+    // 自動跳到第一個空著的格子
+    const firstEmpty = newAnswers.findIndex(ans => ans === null);
+    setActiveBlank(firstEmpty !== -1 ? firstEmpty : 0);
+  };
+
+  return (
+    // 增加 pb-[320px] 確保手機版滑動時底部不會被固定區塊擋住
+    <div className="min-h-screen bg-slate-50 py-8 px-4 font-sans text-slate-800 pb-[360px] lg:pb-8 relative overflow-hidden">
+      
+      {/* 煙火特效 (當過關時顯示) */}
+      {gameState === 'won' && (
+        <div className="fixed inset-0 pointer-events-none z-0 flex justify-center overflow-hidden">
+          {Array.from({ length: 50 }).map((_, i) => (
+            <div 
+              key={i}
+              className="absolute animate-confetti w-3 h-3 rounded-sm"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `-5%`,
+                backgroundColor: ['#f87171', '#fbbf24', '#34d399', '#60a5fa', '#a78bfa', '#f472b6'][Math.floor(Math.random() * 6)],
+                animationDelay: `${Math.random() * 3}s`,
+                animationDuration: `${2 + Math.random() * 3}s`
+              }}
+            />
+          ))}
+          <style>{`
+            @keyframes confetti {
+              0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+              100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+            }
+            .animate-confetti { animation: confetti linear forwards infinite; }
+          `}</style>
+        </div>
+      )}
+
+      <div className="max-w-6xl mx-auto space-y-6 relative z-10">
+        
+        {/* 標題與資訊區 */}
+        <header className="text-center mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-indigo-800 mb-4 drop-shadow-sm flex items-center justify-center gap-3">
+            📖 挑戰：成語填空大考驗
+          </h1>
+          <div className="flex flex-wrap justify-center items-center gap-4 text-slate-600 text-base md:text-lg">
+            <span className="flex items-center gap-2 bg-white px-4 py-1.5 rounded-full shadow-sm border border-slate-200">
+              <MousePointerClick className="w-5 h-5 text-indigo-500" />
+              點擊空格後選擇下方成語
+            </span>
+            <span className={`flex items-center gap-2 bg-white px-4 py-1.5 rounded-full shadow-sm border border-slate-200 font-mono font-bold ${gameState === 'won' ? 'text-green-600' : 'text-slate-700'}`}>
+              <Clock className={`w-5 h-5 ${gameState === 'won' ? 'text-green-500' : 'text-slate-400'}`} />
+              {formatTime(timeElapsed)}
+            </span>
+          </div>
+        </header>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+          
+          {/* 左側：題目區 */}
+          <div className="lg:col-span-8 space-y-4 md:space-y-5">
+            {currentQuestions.map((q, idx) => {
+              const isFilled = answers[idx] !== null;
+              const isActive = activeBlank === idx && gameState === 'playing';
+              const isWrong = gameState === 'checking' && wrongIndices.includes(idx);
+              const isCorrectInChecking = gameState === 'checking' && !wrongIndices.includes(idx);
+              const isAllWon = gameState === 'won';
+
+              return (
+                <div 
+                  key={q.id} 
+                  className={`bg-white p-5 md:p-6 rounded-2xl shadow-sm border-2 transition-all duration-300 flex flex-col gap-3
+                    ${isActive ? 'border-indigo-400 shadow-md ring-4 ring-indigo-50' : 'border-transparent hover:border-slate-200'}
+                    ${isWrong ? 'border-red-300 bg-red-50' : ''}
+                    ${isAllWon ? 'border-green-300 bg-green-50' : ''}
+                  `}
+                >
+                  <div className="flex items-start gap-4">
+                    <span className={`flex-shrink-0 w-8 h-8 flex items-center justify-center font-bold rounded-full text-sm
+                      ${isWrong ? 'bg-red-200 text-red-800' : isAllWon ? 'bg-green-200 text-green-800' : 'bg-indigo-100 text-indigo-700'}
+                    `}>
+                      {idx + 1}
+                    </span>
+                    <div className="text-lg leading-loose text-slate-700 flex-1 flex flex-wrap items-center">
+                      <span>{q.text}</span>
+                      
+                      {/* 填空區塊 */}
+                      <div 
+                        onClick={() => handleSlotClick(idx)}
+                        className={`
+                          mx-2 px-4 py-1 min-w-[120px] h-10 inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200
+                          ${gameState === 'playing' ? 'cursor-pointer hover:scale-105 active:scale-95' : 'cursor-default'}
+                          ${!isFilled && !isActive ? 'border-b-2 border-dashed border-slate-400 text-slate-400 bg-slate-50 hover:bg-slate-100' : ''}
+                          ${isActive ? 'bg-indigo-500 text-white shadow-inner' : ''}
+                          ${isFilled && !isActive && gameState === 'playing' ? 'bg-indigo-100 text-indigo-800 border border-indigo-200' : ''}
+                          ${isWrong ? 'bg-red-500 text-white shadow-inner line-through decoration-2 opacity-80' : ''}
+                          ${isCorrectInChecking || isAllWon ? 'bg-green-500 text-white border border-green-600' : ''}
+                        `}
+                      >
+                        {answers[idx] || (isActive ? '請選擇成語' : '＿＿＿＿')}
+                      </div>
+
+                      <span>{q.after}</span>
+                    </div>
+                  </div>
+
+                  {/* 錯誤時的提示區塊 */}
+                  {isWrong && (
+                    <div className="ml-12 mt-2 p-3 bg-white rounded-lg border border-red-200 flex items-start gap-2 text-red-700 animate-fade-in shadow-sm">
+                      <Info className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="font-bold text-sm mb-1">提示：正確的成語意思是...</p>
+                        <p className="text-sm">{idiomHints[q.blank]}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* 右側 / 底部：成語庫與控制面板 */}
+          <div className="lg:col-span-4">
+            <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-4 shadow-[0_-15px_30px_-15px_rgba(0,0,0,0.2)] z-50 
+                            lg:sticky lg:top-8 lg:border lg:rounded-3xl lg:p-6 lg:shadow-xl lg:bg-white lg:flex lg:flex-col">
+              
+              {gameState === 'won' ? (
+                // --- 過關畫面 ---
+                <div className="text-center py-6 space-y-5">
+                  <div className="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
+                    <Trophy className="w-10 h-10 text-yellow-500" />
+                  </div>
+                  <h2 className="text-2xl font-black text-green-600">恭喜全部答對！</h2>
+                  <p className="text-slate-600 font-medium">
+                    闖關總耗時：<span className="text-xl text-indigo-600 font-bold">{formatTime(timeElapsed)}</span>
+                  </p>
+                  <button 
+                    onClick={initGame}
+                    className="w-full mt-4 py-4 bg-indigo-600 text-white text-lg font-bold rounded-xl shadow-lg hover:bg-indigo-700 hover:-translate-y-1 transition-all flex justify-center items-center gap-2"
+                  >
+                    <RefreshCw className="w-5 h-5" /> 玩新的一局
+                  </button>
+                </div>
+              ) : (
+                // --- 遊玩 / 檢查畫面 ---
+                <>
+                  <div className="flex justify-between items-center mb-3 lg:mb-5">
+                    <h2 className="text-lg lg:text-xl font-bold text-slate-800 flex items-center gap-2">
+                      🧩 成語字庫
+                    </h2>
+                    {gameState === 'playing' && (
+                      <span className="text-xs lg:text-sm font-medium text-indigo-600 bg-indigo-50 px-2 lg:px-3 py-1 rounded-full whitespace-nowrap">
+                        {activeBlank !== null ? `正在填寫第 ${activeBlank + 1} 題` : '請點擊空格'}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* 成語選項按鈕 */}
+                  <div className="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-2 gap-2 lg:gap-3 overflow-y-auto max-h-[22vh] min-h-[120px] lg:max-h-[50vh] p-1">
+                    {shuffledIdioms.map((idiom, idx) => {
+                      let isUsed = false;
+                      const ansIdx = answers.indexOf(idiom);
+                      if (ansIdx !== -1) {
+                        if (gameState === 'playing') isUsed = true;
+                        else if (gameState === 'checking' && !wrongIndices.includes(ansIdx)) isUsed = true;
+                      }
+
+                      // 在遊玩狀態下不禁用已使用的成語，允許點擊來「移動」它
+                      const isDisabled = gameState !== 'playing' || activeBlank === null;
+
+                      return (
+                        <button
+                          key={idx}
+                          onClick={() => handleSelectIdiom(idiom)}
+                          disabled={isDisabled}
+                          className={`
+                            py-2 px-1 lg:py-3 lg:px-2 rounded-xl text-center text-sm lg:text-base font-bold transition-all duration-200 border-2
+                            ${isUsed && gameState === 'playing'
+                              ? 'bg-slate-50 text-slate-500 border-dashed border-slate-300 hover:border-indigo-400 hover:text-indigo-600 hover:shadow-sm opacity-80' 
+                              : isUsed && gameState !== 'playing'
+                              ? 'bg-slate-100 text-slate-400 border-transparent cursor-not-allowed opacity-50'
+                              : 'bg-white text-slate-700 border-slate-200 hover:border-indigo-400 hover:text-indigo-600 hover:shadow-md active:scale-95 shadow-sm'
+                            }
+                            ${activeBlank === null && !isUsed && gameState === 'playing' ? 'opacity-70' : ''}
+                          `}
+                        >
+                          {idiom}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* 錯誤提示文字 (取代 Alert) */}
+                  {errorMsg && (
+                    <div className="mt-3 flex items-center gap-2 text-red-600 bg-red-50 p-2 lg:p-3 rounded-lg text-sm font-bold animate-pulse">
+                      <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                      {errorMsg}
+                    </div>
+                  )}
+
+                  {/* 提交與重試按鈕區 */}
+                  <div className="mt-4 pt-4 border-t border-slate-100">
+                    {gameState === 'playing' ? (
+                      <button 
+                        onClick={handleSubmit}
+                        className="w-full py-3 lg:py-4 bg-indigo-600 text-white text-base lg:text-lg font-bold rounded-xl shadow-lg shadow-indigo-200 hover:bg-indigo-700 active:scale-95 transition-all flex justify-center items-center gap-2"
+                      >
+                        交卷對答案 <CheckCircle className="w-5 h-5" />
+                      </button>
+                    ) : (
+                      <div className="space-y-3 animate-fade-in">
+                        <div className="p-3 lg:p-4 rounded-xl text-center bg-red-50 border-2 border-red-200 text-red-700">
+                          <p className="font-bold mb-1">
+                            哎呀！有 <span className="text-xl mx-1">{wrongIndices.length}</span> 題答錯了
+                          </p>
+                          <p className="text-xs lg:text-sm">請看左側的紅框提示後重新挑戰！</p>
+                        </div>
+                        <button 
+                          onClick={handleRetryErrors}
+                          className="w-full py-3 lg:py-4 bg-orange-500 text-white text-base lg:text-lg font-bold rounded-xl shadow-md hover:bg-orange-600 active:scale-95 transition-all flex justify-center items-center gap-2"
+                        >
+                          <RefreshCw className="w-5 h-5" /> 重新作答錯誤題目
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+}
