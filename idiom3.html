@@ -34,76 +34,94 @@
     const Info = ({className}) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>;
     const Trophy = ({className}) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>;
 
-    // === 題庫設定 (三套全新題幹，隨機輪替) ===
-    const questionSets = [
-      // 第一套
-      [
-        { id: 1, text: "身為主管，分配獎金時一定要公平公正，絕不能", blank: "厚此薄彼", after: "，否則會引起員工強烈不滿。" },
-        { id: 2, text: "這家老字號糕餅店每逢中秋節總是", blank: "戶限為穿", after: "，排隊購買的顧客絡繹不絕，連門檻都快被踩破了。" },
-        { id: 3, text: "他一生行事光明磊落，自認對得起天地良心，絕對", blank: "俯仰無愧", after: "。" },
-        { id: 4, text: "這座小島擁有", blank: "得天獨厚", after: "的地理位置與氣候，四季如春，是著名的度假勝地。" },
-        { id: 5, text: "遇到辦公室裡的人事鬥爭，他總是選擇", blank: "明哲保身", after: "，保持中立，不願捲入是非之中。" },
-        { id: 6, text: "經理對於這個創新提案", blank: "不置可否", after: "，既沒有點頭答應，也沒有直接拒絕，讓人摸不透他的真實想法。" },
-        { id: 7, text: "那位年輕藝術家雖然才華洋溢，卻因為", blank: "恃才傲物", after: "、目中無人，得罪了不少業界的前輩。" },
-        { id: 8, text: "他表面上對長官的指示連聲稱是，私底下卻", blank: "陽奉陰違", after: "，完全照自己的意思去做。" },
-        { id: 9, text: "退休後，他搬回鄉下種菜養雞，遠離都市喧囂，過著", blank: "返璞歸真", after: "的恬淡生活。" },
-        { id: 10, text: "隔壁搬來一位", blank: "慈眉善目", after: "的老奶奶，經常烤餅乾分給社區的小朋友吃。" },
-        { id: 11, text: "孩子們在廣闊的草原上", blank: "無拘無束", after: "地奔跑放風箏，玩得不亦樂乎。" },
-        { id: 12, text: "參加婚禮時穿著打扮要得體，千萬別穿著浮誇的白紗", blank: "喧賓奪主", after: "，搶了新娘的風采。" },
-      ],
-      // 第二套
-      [
-        { id: 1, text: "父母對待孩子應該一視同仁，切忌", blank: "厚此薄彼", after: "，以免造成手足間的嫌隙與不平。" },
-        { id: 2, text: "這家知名網美餐廳剛開幕，每天來打卡的民眾", blank: "戶限為穿", after: "，熱鬧非凡。" },
-        { id: 3, text: "只要我做事本著良心，沒有做對不起別人的事，自然能", blank: "俯仰無愧", after: "，半夜不怕鬼敲門。" },
-        { id: 4, text: "臺灣擁有", blank: "得天獨厚", after: "的自然景觀資源，高山與海洋兼具，吸引許多觀光客探訪。" },
-        { id: 5, text: "在這個充滿勾心鬥角的部門裡，他學會了", blank: "明哲保身", after: "，不輕易表露自己的真實想法。" },
-        { id: 6, text: "對於是否要改變現有制度，董事長始終", blank: "不置可否", after: "，讓底下的主管們無所適從。" },
-        { id: 7, text: "他雖然聰明絕頂，卻總是", blank: "恃才傲物", after: "，不願與人合作，因此在團隊中人緣並不好。" },
-        { id: 8, text: "這些不肖業者對政府的環保法規", blank: "陽奉陰違", after: "，私下依然偷偷排放有毒廢水。" },
-        { id: 9, text: "厭倦了都市的快節奏與繁華，他決定搬到東部過著", blank: "返璞歸真", after: "的純樸農夫生活。" },
-        { id: 10, text: "廟裡供奉的菩薩神像", blank: "慈眉善目", after: "，讓人看了內心感到十分平靜與安定。" },
-        { id: 11, text: "脫離了繁重的課業壓力，畢業生們終於可以", blank: "無拘無束", after: "地享受漫長的暑假時光。" },
-        { id: 12, text: "這道料理的特製沾醬味道太過濃烈，反而", blank: "喧賓奪主", after: "，掩蓋了頂級海鮮原本的鮮甜。" },
-      ],
-      // 第三套
-      [
-        { id: 1, text: "老師在評分時必須客觀公正，不能因為學生的家世背景而", blank: "厚此薄彼", after: "。" },
-        { id: 2, text: "每到百貨公司的週年慶，一樓的化妝品專櫃總是", blank: "戶限為穿", after: "，大家都想搶到最優惠的商品。" },
-        { id: 3, text: "他一生清廉奉公，退休時可以大聲說自己對國家社會", blank: "俯仰無愧", after: "。" },
-        { id: 4, text: "這片土地擁有", blank: "得天獨厚", after: "的肥沃土壤，種出來的水果特別香甜多汁。" },
-        { id: 5, text: "為了避免捲入這場政治風暴，許多官員選擇", blank: "明哲保身", after: "，對爭議事件保持沈默。" },
-        { id: 6, text: "面對記者的尖銳提問，發言人", blank: "不置可否", after: "，用高超的場面話巧妙地迴避了過去。" },
-        { id: 7, text: "即使工作能力再強，若是", blank: "恃才傲物", after: "、不懂得謙虛，也很難獲得他人的真心尊重。" },
-        { id: 8, text: "這種", blank: "陽奉陰違", after: "的行為最要不得，當面說會改進，背後卻又繼續搞小動作。" },
-        { id: 9, text: "經過多年的商場打拚，他現在更嚮往", blank: "返璞歸真", after: "、簡單沒有負擔的日子。" },
-        { id: 10, text: "院長爺爺平時總是", blank: "慈眉善目", after: "的，對待育幼院裡的孩子們就像自己的親孫子一樣。" },
-        { id: 11, text: "藝術家的創作應該要", blank: "無拘無束", after: "，不受傳統框架的限制，才能激發出獨一無二的作品。" },
-        { id: 12, text: "配角在劇中的表現太過搶眼，反而", blank: "喧賓奪主", after: "，讓觀眾差點忽略了男女主角的存在。" },
-      ]
-    ];
-
-    // 完整的成語庫
-    const baseIdiomBank = [
-      "得天獨厚", "不置可否", "明哲保身", "俯仰無愧",
-      "慈眉善目", "恃才傲物", "陽奉陰違", "厚此薄彼",
-      "無拘無束", "返璞歸真", "戶限為穿", "喧賓奪主"
+    // === 新版動態題庫設定 ===
+    const ALL_IDIOMS = [
+      "莫逆之交", "狼狽不堪", "前車之鑑", "水到渠成", "遺珠之憾",
+      "才疏學淺", "迥然不同", "劍拔弩張", "如獲至寶", "義不容辭",
+      "獨具匠心", "穩扎穩打", "率由舊章", "搖旗吶喊", "牽腸掛肚"
     ];
 
     // 成語提示
     const idiomHints = {
-      "厚此薄彼": "優待某一方，冷落另一方。形容對人不公平。",
-      "戶限為穿": "門檻都快被踩破了。形容進出的人很多，非常熱鬧。",
-      "俯仰無愧": "比喻沒有做虧心事，對得起天地良心。",
-      "得天獨厚": "獨具特殊的優越條件，也指所處的環境特別好。",
-      "明哲保身": "形容人能看清時勢，迴避禍患，保全自身。",
-      "不置可否": "不說可以，也不說不可以。形容不表示明確的意見。",
-      "恃才傲物": "依仗著自己的才能而驕傲自大，看不起別人。",
-      "陽奉陰違": "表面上裝著遵守奉行，暗地裡卻違背不照辦。",
-      "返璞歸真": "去除外在的裝飾，回復原來的自然狀態。",
-      "慈眉善目": "形容面容慈祥和善。",
-      "無拘無束": "自由自在，沒有任何拘束。",
-      "喧賓奪主": "比喻次要的人或事物占了主要者的位置。"
+      "莫逆之交": "心意相投、至好無嫌的朋友。",
+      "狼狽不堪": "比喻處境非常窘迫、進退兩難。",
+      "前車之鑑": "比喻先前的失敗，可以做為以後的教訓。",
+      "水到渠成": "比喻條件成熟，事情自然成功。",
+      "遺珠之憾": "比喻人才被埋沒或優美的東西被遺漏。",
+      "才疏學淺": "才識不廣，學問不深。多用作自謙之詞。",
+      "迥然不同": "完全不同，相差得很遠。",
+      "劍拔弩張": "形容情勢緊張，一觸即發。",
+      "如獲至寶": "好像得到最珍貴的寶物。比喻非常高興。",
+      "義不容辭": "道義上不容許推辭。",
+      "獨具匠心": "具有獨創性的巧妙構思。",
+      "穩扎穩打": "形容步步為營，踏實穩健地做事。",
+      "率由舊章": "完全依循舊有的法規或成例辦事。",
+      "搖旗吶喊": "比喻為別人助威壯聲勢。",
+      "牽腸掛肚": "比喻十分操心、掛念。"
+    };
+
+    // 每句成語對應多個不同題幹 (每次載入會隨機抽一句)
+    const questionPool = {
+      "莫逆之交": [
+        { text: "他們兩人從小一起長大，感情深厚，是真正的", after: "。" },
+        { text: "我們因為有共同的愛好而結識，不久便成了", after: "，無話不談。" }
+      ],
+      "狼狽不堪": [
+        { text: "突然下起傾盆大雨，沒帶傘的他被淋得", after: "。" },
+        { text: "公司的財務危機讓他陷入", after: "的境地，不知如何是好。" }
+      ],
+      "前車之鑑": [
+        { text: "有了上次投資失敗的", after: "，他這次顯得格外謹慎。" },
+        { text: "歷史的教訓應該作為我們的", after: "，避免重蹈覆轍。" }
+      ],
+      "水到渠成": [
+        { text: "只要事前準備充分，這件計畫自然會", after: "，不用太過擔心。" },
+        { text: "他們交往多年，感情穩定，結婚也是", after: "的事。" }
+      ],
+      "遺珠之憾": [
+        { text: "這部優秀的電影沒能獲得影展的大獎，實在是", after: "。" },
+        { text: "評審們決定增設特別獎，以彌補優秀參賽者落榜的", after: "。" }
+      ],
+      "才疏學淺": [
+        { text: "小弟", after: "，對於這門深奧的學問，實在不敢隨便發表意見。" },
+        { text: "雖然他總謙稱自己", after: "，但其實他的見解往往十分精闢。" }
+      ],
+      "迥然不同": [
+        { text: "這對雙胞胎雖然長得很像，但個性卻", after: "。" },
+        { text: "南北兩地的飲食文化", after: "，各有其獨特的風味。" }
+      ],
+      "劍拔弩張": [
+        { text: "會議上雙方意見分歧，氣氛", after: "，彷彿隨時會吵起來。" },
+        { text: "兩國邊界衝突不斷，局勢", after: "，引起國際社會高度關注。" }
+      ],
+      "如獲至寶": [
+        { text: "他在二手書店找到了絕版的參考書，高興得", after: "。" },
+        { text: "拿到偶像親筆簽名的專輯，他簡直", after: "，小心翼翼地收藏起來。" }
+      ],
+      "義不容辭": [
+        { text: "身為社區主委，維護環境整潔是我", after: "的責任。" },
+        { text: "老朋友遇到困難，他當然", after: "地伸出援手。" }
+      ],
+      "獨具匠心": [
+        { text: "這座建築物的設計", after: "，巧妙地融合了現代與傳統的元素。" },
+        { text: "這位藝術家的木雕作品", after: "，每一個細節都令人嘆為觀止。" }
+      ],
+      "穩扎穩打": [
+        { text: "比賽中我們不求快，只要", after: "，一定能取得最後的勝利。" },
+        { text: "這家企業在市場上", after: "，逐漸累積了雄厚的實力。" }
+      ],
+      "率由舊章": [
+        { text: "如果凡事只會", after: "，不思變通，企業將很難適應瞬息萬變的市場。" },
+        { text: "新主管上任後，沒有", after: "，反而大刀闊斧地推動了一系列改革。" }
+      ],
+      "搖旗吶喊": [
+        { text: "運動會上，啦啦隊在場邊為選手們", after: "，氣氛十分熱烈。" },
+        { text: "他雖然沒有參與實際的企劃，卻很會在旁邊", after: "。" }
+      ],
+      "牽腸掛肚": [
+        { text: "孩子出國留學，做母親的總是對他", after: "，日夜期盼他平安歸來。" },
+        { text: "這件案子還沒結案，讓他日夜", after: "，連飯都吃不下。" }
+      ]
     };
 
     const shuffleArray = (array) => {
@@ -124,7 +142,7 @@
     function App() {
       const [currentQuestions, setCurrentQuestions] = useState([]);
       const [shuffledIdioms, setShuffledIdioms] = useState([]);
-      const [answers, setAnswers] = useState(Array(12).fill(null));
+      const [answers, setAnswers] = useState([]);
       const [activeBlank, setActiveBlank] = useState(0);
       
       const [gameState, setGameState] = useState('playing'); 
@@ -135,10 +153,27 @@
       const [timerActive, setTimerActive] = useState(false);
 
       const initGame = () => {
-        const randomSetIndex = Math.floor(Math.random() * questionSets.length);
-        setCurrentQuestions(questionSets[randomSetIndex]);
-        setShuffledIdioms(shuffleArray(baseIdiomBank));
-        setAnswers(Array(12).fill(null));
+        // 隨機挑選 12 個成語作為這次的題目 (確保每次載入不同，符合最多15題需求且維持良好的版面)
+        const QUESTION_COUNT = 12;
+        const shuffledAll = shuffleArray(ALL_IDIOMS);
+        const selectedIdioms = shuffledAll.slice(0, QUESTION_COUNT);
+        
+        // 從題庫中為每個成語隨機挑一個題幹
+        const generatedQuestions = selectedIdioms.map((idiom, index) => {
+          const pool = questionPool[idiom];
+          const randomQ = pool[Math.floor(Math.random() * pool.length)];
+          return {
+            id: index + 1,
+            text: randomQ.text,
+            blank: idiom,
+            after: randomQ.after
+          };
+        });
+
+        // 再次打亂題目出現的順序
+        setCurrentQuestions(shuffleArray(generatedQuestions));
+        setShuffledIdioms(shuffleArray(selectedIdioms));
+        setAnswers(Array(QUESTION_COUNT).fill(null));
         setActiveBlank(0);
         setGameState('playing');
         setErrorMsg('');
@@ -233,6 +268,11 @@
       return (
         <div className="min-h-screen bg-slate-50 py-8 px-4 font-sans text-slate-800 pb-[360px] lg:pb-8 relative">
           
+          {/* 版本提示標籤 */}
+          <div className="absolute top-4 right-4 md:top-6 md:right-6 bg-indigo-100 text-indigo-800 px-3 py-1.5 rounded-full text-xs md:text-sm font-bold shadow-sm border border-indigo-200 z-50 flex items-center gap-1.5 opacity-90 hover:opacity-100 transition-opacity">
+            <Info className="w-4 h-4" /> 五下段二甲
+          </div>
+
           {gameState === 'won' && (
             <div className="fixed inset-0 pointer-events-none z-0 flex justify-center overflow-hidden">
               {Array.from({ length: 50 }).map((_, i) => (
